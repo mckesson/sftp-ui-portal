@@ -18,32 +18,29 @@ export const uploadKeyValidation = Yup.object({
 });
 
 export const keyValidation = Yup.object({
-  data: Yup.array().of(
-    Yup.object({
-      auth_type: Yup.string().required("Auth type is required"),
-      password: Yup.string().test(
-        "password-required",
-        "Password is required",
-        function (value) {
-          const { auth_type } = this.parent;
-          if (auth_type === "password" && !value) {
-            return this.createError({ message: "Password is required" });
-          }
-          return true;
-        }
-      ),
-      keyFile: Yup.mixed().test(
-        "key-file-required",
-        "Key file is required",
-        function (value) {
-          const { auth_type } = this.parent;
-          if (auth_type === "key" && !value) {
-            return this.createError({ message: "Key file is required" });
-          }
-          return true;
-        }
-      ),
-    })
+  sftpLoginId: Yup.string().required("SFTP Login ID is required"),
+  auth_type: Yup.string().required("Auth type is required"),
+  password: Yup.string().test(
+    "password-required",
+    "Password is required",
+    function (value) {
+      const { auth_type } = this.parent;
+      if (auth_type === "password" && !value) {
+        return this.createError({ message: "Password is required" });
+      }
+      return true;
+    }
+  ),
+  keyFile: Yup.mixed().test(
+    "key-file-required",
+    "Key file is required",
+    function (value) {
+      const { auth_type } = this.parent;
+      if (auth_type === "key" && !value) {
+        return this.createError({ message: "Key file is required" });
+      }
+      return true;
+    }
   ),
 });
 

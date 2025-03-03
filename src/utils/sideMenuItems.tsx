@@ -61,10 +61,10 @@ export const menuItems = [
         label: "Reports",
         path: "/report-list",
       },
-      {
-        label: "Run Reports",
-        path: "/run-report",
-      },
+      // {
+      //   label: "Run Reports",
+      //   path: "/run-report",
+      // },
     ],
   },
 ];

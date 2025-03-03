@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "../../../components/Container";
 import {
   Box,
@@ -30,6 +30,27 @@ const KeyManagement = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [passwordGen, setPasswordGen] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState<number | false>(0);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [selectedSftpId, setSelectedSftpId] = useState<string | null>(null);
+  console.log("selectedSftpId", selectedSftpId);
+
+  useEffect(() => {
+    if (searchQuery === "") {
+      setFilteredData(tpData);
+    }
+  }, [searchQuery]);
+
+  const handleSearch = () => {
+    const query = searchQuery.toLowerCase();
+    const result = tpData.filter((item) => {
+      return (
+        item.sftpId.toLowerCase().includes(query) ||
+        item.cimsPartnerId.toLowerCase().includes(query) ||
+        item.host.toLowerCase().includes(query)
+      );
+    });
+    setFilteredData(result);
+  };
 
   //Formik for popup.
   const formik = useFormik({
@@ -238,16 +259,8 @@ const KeyManagement = () => {
     setExpandedIndex(expandedIndex === index ? false : index);
   };
 
-  const handleSearch = () => {
-    const query = searchQuery.toLowerCase();
-    // const result = apiData.filter((item) => {
-    //   return (
-    //     item.sftpLoginId.toLowerCase().includes(query) ||
-    //     item.emailId.toLowerCase().includes(query) ||
-    //     item.contactName.toLowerCase().includes(query)
-    //   );
-    // });
-    // setFilteredData(result);
+  const handleRowClick = (sftpId: string) => {
+    setSelectedSftpId(sftpId);
   };
 
   return (
@@ -266,7 +279,7 @@ const KeyManagement = () => {
             <Grid size={{ xs: 6, sm: 6 }}>
               <TextField
                 fullWidth
-                placeholder="Search for Trading Partner"
+                placeholder="Search for Trading Partner or SFTP Login ID"
                 variant="outlined"
                 size="small"
                 value={searchQuery}
@@ -279,40 +292,61 @@ const KeyManagement = () => {
               </SearchButton>
             </Grid>
           </Grid>
+          {/* Trading Partner Table */}
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <Typography variant="h4" gutterBottom className="heading-small">
+                Trading Partner List
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container spacing={1}>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <Table
+                pagination
+                columns={[
+                  { id: "sftpId", name: "SFTP ID" },
+                  { id: "cimsPartnerId", name: "CIMS ID" },
+                  { id: "host", name: "Trading Partner Name" },
+                ]}
+                data={filteredData}
+                onRowClick={(row) => handleRowClick(row.sftpId)}
+              />
+            </Grid>
+          </Grid>
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 12 }}>
               <Typography variant="h4" gutterBottom className="heading-small">
                 Host key
               </Typography>
+              <Separator />
             </Grid>
           </Grid>
-          <Grid container spacing={1} className="list-sftp-id">
-            {sftpData.map((item, index) => (
-              <Grid size={{ xs: 12, sm: 12 }} key={index}>
-                <Accordion
-                  expanded={expandedIndex === index}
-                  onChange={() => handleAccordionChange(index)}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMore />}
-                    aria-controls={`panel${index}-content`}
-                    id={`panel${index}-header`}
-                  >
-                    <Typography variant="h6">
-                      sFTP Login Id : {item.sftpLoginId}
-                    </Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Table
-                      pagination
-                      columns={columns}
-                      data={generateRowData(item.details)}
-                      noDataText="Host Key Not Found"
-                    />
-                  </AccordionDetails>
-                </Accordion>
+          <Grid container spacing={1}>
+            {selectedSftpId ? (
+              <Grid size={{ xs: 12, sm: 12 }}>
+                <Table
+                  pagination
+                  columns={columns}
+                  data={generateRowData(
+                    sftpData.filter(
+                      (item) => item.sftpLoginId === selectedSftpId
+                    )[0]?.details || []
+                  )}
+                  noDataText="Host Key Not Found"
+                />
               </Grid>
-            ))}
+            ) : (
+              <Grid
+                size={{ xs: 12, sm: 12 }}
+                sx={{ textAlign: "center", marginTop: 2 }}
+              >
+                <Typography variant="h6" color="textSecondary">
+                  Please select a Trading Partner / SFTP Login ID to view Host
+                  Key details.
+                </Typography>
+              </Grid>
+            )}
           </Grid>
           <Grid container spacing={1}>
             <Grid sx={{ marginTop: "20px" }} size={{ xs: 12, sm: 12 }}>
@@ -321,9 +355,21 @@ const KeyManagement = () => {
               </Typography>
               <Separator />
             </Grid>
-            <Grid size={{ xs: 12, sm: 12 }}>
-              <Table pagination columns={clientColumns} data={rowData} />
-            </Grid>
+            {selectedSftpId ? (
+              <Grid size={{ xs: 12, sm: 12 }}>
+                <Table pagination columns={clientColumns} data={rowData} />
+              </Grid>
+            ) : (
+              <Grid
+                size={{ xs: 12, sm: 12 }}
+                sx={{ textAlign: "center", marginTop: 2 }}
+              >
+                <Typography variant="h6" color="textSecondary">
+                  Please select a Trading Partner / SFTP Login ID to view Client
+                  Key details.
+                </Typography>
+              </Grid>
+            )}
           </Grid>
         </Box>
         <Modal
@@ -349,6 +395,24 @@ const KeyManagement = () => {
     </div>
   );
 };
+
+const tpData = [
+  {
+    sftpId: "efts02",
+    host: "Walmart",
+    cimsPartnerId: "ehd002",
+  },
+  {
+    sftpId: "efts02",
+    host: "CVS",
+    cimsPartnerId: "ehd002",
+  },
+  {
+    sftpId: "efts01",
+    host: "Walmart",
+    cimsPartnerId: "ehd012",
+  },
+];
 
 const apiData = [
   {

@@ -22,38 +22,6 @@ export default function Support() {
                 to assist you.
               </Typography>
             </Grid>
-            <Grid size={12}>
-              <Typography className="heading-support">
-                Contact Support:
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} className="contact-support-content">
-            <Grid size={1}>
-              <PhoneIphone />
-            </Grid>
-            <Grid size={11}>
-              <Typography>
-                Call us at <b>(800) 793-9875</b> for immediate help.
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} className="contact-support-content">
-            <Grid size={1}>
-              <MailOutline />
-            </Grid>
-            <Grid size={11}>
-              <Typography>
-                Send us an email at{" "}
-                <a
-                  href="mailto:edicustomersupport@mckesson.com"
-                  className="mail-link"
-                >
-                  edicustomersupport@mckesson.com
-                </a>{" "}
-                and we'll get back to you within 24 hours.
-              </Typography>
-            </Grid>
           </Grid>
           <Grid spacing={2} className="contact-support-content column">
             <Grid size={12}>
@@ -65,11 +33,51 @@ export default function Support() {
           <Grid container spacing={2} className="contact-support-content">
             <Grid size={12}>
               <Typography style={{ listStyleType: "circle" }}>
+                <b>FAQ:</b> Common questions and solutions related to host key
+                and SFTP client key issues.
+              </Typography>
+            </Grid>
+            <Grid size={12}>
+              <Typography style={{ listStyleType: "circle" }}>
                 <b>Step-by-Step Guides:</b> Easy-to-follow{" "}
                 <NavLink className="mail-link" to="/instructions">
                   instructions
                 </NavLink>{" "}
                 for downloading and uploading keys.
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid spacing={2} className="contact-support-content column">
+            <Grid size={12}>
+              <Typography className="heading-support">
+                Contact Support:
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} className="contact-support-content">
+            <Grid size={0.5}>
+              <PhoneIphone />
+            </Grid>
+            <Grid size={11.5}>
+              <Typography>
+                Call us at <b>(800) 793-9875</b> for immediate help.
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} className="contact-support-content">
+            <Grid size={0.5}>
+              <MailOutline />
+            </Grid>
+            <Grid size={11.5}>
+              <Typography>
+                Send us an email at{" "}
+                <a
+                  href="mailto:edicustomersupport@mckesson.com"
+                  className="mail-link"
+                >
+                  edicustomersupport@mckesson.com
+                </a>{" "}
+                and we'll get back to you within 24 hours.
               </Typography>
             </Grid>
           </Grid>

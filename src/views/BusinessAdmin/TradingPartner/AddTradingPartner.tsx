@@ -24,8 +24,8 @@ interface FormValues {
     phone: string;
     role: string;
   }[];
-  sftpLoginIds: string[];
-  cimsPartnerIds: string[];
+  sftpLoginIds: { loginId: string; password: string }[];
+  cimsPartnerIds: { loginId: string; partnerId: string }[];
 }
 
 export default function AddTradingPartner() {
@@ -44,10 +44,10 @@ export default function AddTradingPartner() {
       tradingPartnerName: "",
       businessUnit: "",
       contactPersons: [
-        { firstName: "", lastName: "", email: "", phone: "", role: "" },
+        // { firstName: "", lastName: "", email: "", phone: "", role: "" },
       ],
-      sftpLoginIds: [""],
-      cimsPartnerIds: [""],
+      sftpLoginIds: [],
+      cimsPartnerIds: [],
     },
     onSubmit: handleAddPartner,
   });
@@ -74,19 +74,25 @@ export default function AddTradingPartner() {
     });
   };
 
-  // Add new sFTP Login ID
+  // Add new sFTP Login with password
   const handleAddSFTPLogin = () => {
     partnerForm.setValues({
       ...partnerForm.values,
-      sftpLoginIds: [...partnerForm.values.sftpLoginIds, ""],
+      sftpLoginIds: [
+        ...partnerForm.values.sftpLoginIds,
+        { loginId: "", password: "" },
+      ],
     });
   };
 
-  // Add new CIMS Partner ID
+  // Add new CIMS Partner with autocomplete and partner ID
   const handleAddCIMSPartner = () => {
     partnerForm.setValues({
       ...partnerForm.values,
-      cimsPartnerIds: [...partnerForm.values.cimsPartnerIds, ""],
+      cimsPartnerIds: [
+        ...partnerForm.values.cimsPartnerIds,
+        { loginId: "", partnerId: "" },
+      ],
     });
   };
 
@@ -311,78 +317,41 @@ export default function AddTradingPartner() {
                   onClick={handleAddContactPerson}
                   className="add-row-btn"
                 >
-                  Add Another Contact
+                  Add Contact
                 </Button>
               </Grid>
-              {/* Add Multiple CIMS Partner IDs */}
-              <Grid size={12}>
-                <Typography variant="h6" className="heading-small">
-                  CIMS Partner IDs
-                </Typography>
-                {partnerForm.values.cimsPartnerIds.map((id, index) => (
-                  <Grid container key={index} spacing={2}>
-                    <Grid size={10} className="mb-10">
-                      <TextField
-                        fullWidth
-                        placeholder="Enter CIMS Partner ID"
-                        size="small"
-                        value={id}
-                        onChange={(e) => {
-                          const newIds = [...partnerForm.values.cimsPartnerIds];
-                          newIds[index] = e.target.value;
-                          partnerForm.setValues({
-                            ...partnerForm.values,
-                            cimsPartnerIds: newIds,
-                          });
-                        }}
-                      />
-                    </Grid>
-                    <Grid size={{ sm: 2 }}>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        startIcon={<Remove />}
-                        onClick={() => {
-                          const newIds =
-                            partnerForm.values.cimsPartnerIds.filter(
-                              (_, idx) => idx !== index
-                            );
-                          partnerForm.setValues({
-                            ...partnerForm.values,
-                            cimsPartnerIds: newIds,
-                          });
-                        }}
-                      >
-                        Remove
-                      </Button>
-                    </Grid>
-                  </Grid>
-                ))}
-                <Button
-                  startIcon={<Add />}
-                  onClick={handleAddCIMSPartner}
-                  className="add-row-btn"
-                >
-                  Add
-                </Button>
-              </Grid>
-
               {/* Add Multiple sFTP Login IDs */}
               <Grid size={12}>
                 <Typography variant="h6" className="heading-small">
                   sFTP Login IDs
                 </Typography>
-                {partnerForm.values.sftpLoginIds.map((id, index) => (
+                {partnerForm.values.sftpLoginIds.map((item, index) => (
                   <Grid container key={index} spacing={2}>
-                    <Grid size={10} className="mb-10">
+                    <Grid size={5} className="mb-10">
                       <TextField
                         fullWidth
                         placeholder="Enter sFTP Login ID"
                         size="small"
-                        value={id}
+                        value={item.loginId}
                         onChange={(e) => {
                           const newIds = [...partnerForm.values.sftpLoginIds];
-                          newIds[index] = e.target.value;
+                          newIds[index].loginId = e.target.value;
+                          partnerForm.setValues({
+                            ...partnerForm.values,
+                            sftpLoginIds: newIds,
+                          });
+                        }}
+                      />
+                    </Grid>
+                    <Grid size={5} className="mb-10">
+                      <TextField
+                        fullWidth
+                        placeholder="Enter Password"
+                        size="small"
+                        value={item.password}
+                        onChange={(e) => {
+                          const newIds = [...partnerForm.values.sftpLoginIds];
+                          newIds[index].password = e.target.value;
                           partnerForm.setValues({
                             ...partnerForm.values,
                             sftpLoginIds: newIds,
@@ -418,6 +387,75 @@ export default function AddTradingPartner() {
                   Add
                 </Button>
               </Grid>
+              {/* Add Multiple CIMS Partner IDs */}
+              <Grid size={12}>
+                <Typography variant="h6" className="heading-small">
+                  CIMS Partner IDs
+                </Typography>
+                {partnerForm.values.cimsPartnerIds.map((item, index) => (
+                  <Grid container key={index} spacing={2}>
+                    <Grid size={5} className="mb-10">
+                      <TextField
+                        fullWidth
+                        placeholder="Enter sFTP Login ID"
+                        size="small"
+                        value={item.loginId}
+                        onChange={(e) => {
+                          const newIds = [...partnerForm.values.cimsPartnerIds];
+                          newIds[index].loginId = e.target.value;
+                          partnerForm.setValues({
+                            ...partnerForm.values,
+                            cimsPartnerIds: newIds,
+                          });
+                        }}
+                      />
+                    </Grid>
+                    <Grid size={5}>
+                      <TextField
+                        fullWidth
+                        placeholder="Enter CIMS Partner ID"
+                        size="small"
+                        value={item.partnerId}
+                        onChange={(e) => {
+                          const newIds = [...partnerForm.values.cimsPartnerIds];
+                          newIds[index].partnerId = e.target.value;
+                          partnerForm.setValues({
+                            ...partnerForm.values,
+                            cimsPartnerIds: newIds,
+                          });
+                        }}
+                      />
+                    </Grid>
+                    <Grid size={2}>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        startIcon={<Remove />}
+                        onClick={() => {
+                          const newIds =
+                            partnerForm.values.cimsPartnerIds.filter(
+                              (_, idx) => idx !== index
+                            );
+                          partnerForm.setValues({
+                            ...partnerForm.values,
+                            cimsPartnerIds: newIds,
+                          });
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </Grid>
+                  </Grid>
+                ))}
+                <Button
+                  startIcon={<Add />}
+                  onClick={handleAddCIMSPartner}
+                  className="add-row-btn"
+                >
+                  Add
+                </Button>
+              </Grid>
+
               <Grid size={12} className="submit-div">
                 <Button type="submit" fullWidth className="btn-submit">
                   Save

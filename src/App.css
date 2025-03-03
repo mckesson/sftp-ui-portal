@@ -88,6 +88,7 @@
   font-size: 19px !important;
   color:#444 !important;
   line-height: 28px !important;
+  text-align: center;
 }
 
 .heading-support{
@@ -104,10 +105,11 @@
 
 .contact-support-content{
   display: flex;
-  justify-content: center;
-  max-width: 600px;
-  margin: 0 auto;
   margin-top: 20px;
+}
+
+.update-icon{
+  padding: 0;
 }
 
 .mail-link{
