@@ -22,6 +22,11 @@ const SideNav = ({ children }: SideNavProps) => {
     dispatch(toggleDrawer());
   };
 
+  const handleNavigationClick = () => {
+    // Close the drawer when a navigation item is clicked.
+    handleDrawerToggle();
+  };
+
   return (
     <div className="content-wrapper">
       <Drawer anchor="left" open={isDrawerOpen} onClose={handleDrawerToggle}>
@@ -40,7 +45,9 @@ const SideNav = ({ children }: SideNavProps) => {
               menu.items.map((item) => (
                 <li className="sidebar-menu" key={item.path}>
                   <span>
-                    <NavLink to={item.path}>{item.label}</NavLink>
+                    <NavLink to={item.path} onClick={handleNavigationClick}>
+                      {item.label}
+                    </NavLink>
                   </span>
                   <ArrowForwardIosIcon className="arrow-icon" />
                 </li>

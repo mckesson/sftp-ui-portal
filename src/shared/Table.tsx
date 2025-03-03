@@ -7,54 +7,117 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  IconButton,
   TablePagination,
   Box,
   Skeleton,
   Typography,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 
-const Table = ({
+// Define the types for columns and row data
+interface Column {
+  id: string;
+  name: string;
+  align?: "inherit" | "left" | "center" | "right" | "justify";
+  width?: string;
+  minWidth?: string;
+}
+
+interface TableProps<T> {
+  data: T[];
+  columns: Column[];
+  pagination?: boolean;
+  onRowClick?: (row: T) => void;
+  pending?: boolean;
+  noDataText?: string;
+  itemsPerPageOptions?: number[];
+}
+
+const Table = <T,>({
   data,
   columns,
-  onDelete,
-  onEdit,
   pagination = true,
   onRowClick,
   pending,
   noDataText,
   itemsPerPageOptions = [5, 10, 20],
-}) => {
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+}: TableProps<T>) => {
+  const [sortConfig, setSortConfig] = useState<{
+    key: string | null;
+    direction: "asc" | "desc";
+  }>({ key: null, direction: "asc" });
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(itemsPerPageOptions[0]);
 
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return data;
     return [...data].sort((a, b) => {
-      if (a[sortConfig.key] < b[sortConfig.key]) {
+      if (a[sortConfig.key as keyof T] < b[sortConfig.key as keyof T]) {
         return sortConfig.direction === "asc" ? -1 : 1;
       }
-      if (a[sortConfig.key] > b[sortConfig.key]) {
+      if (a[sortConfig.key as keyof T] > b[sortConfig.key as keyof T]) {
         return sortConfig.direction === "asc" ? 1 : -1;
       }
       return 0;
     });
   }, [data, sortConfig]);
 
-  const handleSort = (key) => {
+  const handleSort = (key: string) => {
     setSortConfig((prev) => ({
       key,
       direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
     }));
   };
 
-  const handleChangePage = (_, newPage) => setCurrentPage(newPage);
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangePage = (_: unknown, newPage: number) =>
+    setCurrentPage(newPage);
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setCurrentPage(0);
+  };
+
+  // Extracted logic for rendering the body rows
+  const renderTableBody = () => {
+    if (pending) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length}>
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    if (data.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length}>
+            <Box className="center-data" py={4}>
+              <Typography variant="h5" sx={{ color: "#00000061" }}>
+                {noDataText ?? "No records found"}
+              </Typography>
+            </Box>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    return sortedData
+      .slice(currentPage * rowsPerPage, (currentPage + 1) * rowsPerPage)
+      .map((row, index) => (
+        <TableRow key={index} hover onClick={() => onRowClick?.(row)}>
+          {columns.map((col) => (
+            <TableCell key={col.id} align={col.align}>
+              {row[col.id as keyof T]}
+            </TableCell>
+          ))}
+        </TableRow>
+      ));
   };
 
   return (
@@ -87,66 +150,10 @@ const Table = ({
                     </TableSortLabel>
                   </TableCell>
                 ))}
-                {(onEdit || onDelete) && <TableCell>Actions</TableCell>}
               </TableRow>
             </TableHead>
           )}
-          <TableBody>
-            {pending ? (
-              <TableRow>
-                <TableCell colSpan={columns.length}>
-                  <Skeleton />
-                  <Skeleton />
-                  <Skeleton />
-                  <Skeleton />
-                  <Skeleton />
-                </TableCell>
-              </TableRow>
-            ) : data.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={columns.length}>
-                  <Box className="center-data" py={4}>
-                    <Typography variant="h5" sx={{ color: "#00000061" }}>
-                      {noDataText || "No records found"}
-                    </Typography>
-                  </Box>
-                </TableCell>
-              </TableRow>
-            ) : (
-              sortedData
-                .slice(
-                  currentPage * rowsPerPage,
-                  (currentPage + 1) * rowsPerPage
-                )
-                .map((row) => (
-                  <TableRow key={row.id} hover>
-                    {columns.map((col) => (
-                      <TableCell
-                        key={col.id}
-                        align={col.align}
-                        onClick={() => onRowClick?.(row)}
-                      >
-                        {row[col.id]}
-                      </TableCell>
-                    ))}
-                    {(onEdit || onDelete) && (
-                      <TableCell>
-                        {onEdit && (
-                          <IconButton onClick={() => onEdit(row)}>
-                            <EditIcon />
-                          </IconButton>
-                        )}
-                        {onDelete && (
-                          <IconButton onClick={() => onDelete(row.id)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        )}
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))
-            )}
-          </TableBody>
+          <TableBody>{renderTableBody()}</TableBody>
         </MuiTable>
       </TableContainer>
       {pagination && data.length > 0 && (
