@@ -1,4 +1,10 @@
-import { Box, Button, Grid2 as Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid2 as Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Container from "../../../components/Container";
 import { Add } from "@mui/icons-material";
 import { Separator } from "../../../components/Divider";
@@ -6,9 +12,14 @@ import { useNavigate } from "react-router-dom";
 import Table from "../../../shared/Table";
 import { addOneYear } from "../../../utils/addOneYear";
 import { getTypeForYear } from "../../../utils/getTypeForYears";
+import { SearchButton } from "../../../shared/SearchButton";
+import { useEffect, useState } from "react";
+import SearchIcon from "@mui/icons-material/Search";
 
 export default function ListHostKey() {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState(apiData);
 
   const columns = [
     { id: "version", name: "Version" },
@@ -19,7 +30,21 @@ export default function ListHostKey() {
     { id: "type", name: "Key Status" },
   ];
 
-  const rowData = apiData.map((item: any) => ({
+  useEffect(() => {
+    if (searchQuery === "") {
+      setFilteredData(apiData);
+    }
+  }, [searchQuery]);
+
+  const handleSearch = () => {
+    const query = searchQuery.toLowerCase();
+    const result = apiData.filter((item) => {
+      return item.version.toLowerCase().includes(query);
+    });
+    setFilteredData(result);
+  };
+
+  const rowData = filteredData.map((item: any) => ({
     ...item,
     effectiveDate: new Date(item.effectiveDate).toLocaleString(),
     type: getTypeForYear(new Date(item.effectiveDate).toLocaleString()),
@@ -50,6 +75,27 @@ export default function ListHostKey() {
               >
                 Upload New Host Key
               </Button>
+            </Grid>
+          </Grid>
+          <Grid
+            container
+            spacing={0}
+            sx={{ marginBottom: "16px", marginTop: "16px" }}
+          >
+            <Grid size={{ xs: 6, sm: 6 }}>
+              <TextField
+                fullWidth
+                placeholder="Search Host Key Version"
+                variant="outlined"
+                size="small"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </Grid>
+            <Grid size={{ xs: 2, sm: 2 }}>
+              <SearchButton disableRipple onClick={handleSearch}>
+                <SearchIcon />
+              </SearchButton>
             </Grid>
           </Grid>
           <Grid container spacing={2}>

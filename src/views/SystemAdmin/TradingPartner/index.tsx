@@ -3,33 +3,37 @@ import {
   Box,
   Chip,
   Grid2 as Grid,
+  IconButton,
   TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
 import Table from "../../../shared/Table";
-import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { SearchButton } from "../../../shared/SearchButton";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import { Separator } from "../../../components/Divider";
+import { useNavigate } from "react-router-dom";
 
 const ViewTradingPartner = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(apiData);
 
   const columns = [
     { id: "tradingPartnerName", name: "Trading Partner Name" },
     { id: "businessUnit", name: "Business Unit" },
-    { id: "contactName", name: "Contact Person Name" },
-    { id: "emailId", name: "Email ID" },
-    { id: "phone", name: "Contact Phone No" },
-    { id: "role", name: "Role" },
+    // { id: "contactName", name: "Contact Person Name" },
+    // { id: "emailId", name: "Email ID" },
+    // { id: "phone", name: "Contact Phone No" },
+    // { id: "role", name: "Role" },
     { id: "sftpLoginId", name: "SFTP Login ID" },
     { id: "authMethod", name: "Authentication Method " },
     { id: "cimsPartnerId", name: "CIMS partner ID " },
     { id: "effectiveDate", name: "Effective Date" },
     { id: "hostKeyVersion", name: "Host Key Version" },
+    { id: "action", name: "#", align: "right" },
   ];
 
   useEffect(() => {
@@ -38,17 +42,15 @@ const ViewTradingPartner = () => {
     }
   }, [searchQuery]);
 
-  const renderStatus = (item) =>
-    item.status ? (
-      <Chip label="Active" sx={{ background: "green", color: "#FFF" }} />
-    ) : (
-      <Chip label="Inactive" sx={{ background: "red", color: "#FFF" }} />
-    );
-
-  const renderAction = (item) => {
+  const renderAction = (item: any) => {
     return (
-      <Tooltip title="Update" arrow>
-        <EditIcon />
+      <Tooltip title="View" arrow>
+        <IconButton
+          className="update-icon"
+          onClick={() => navigate(`/view/trading-partner/${item.id}`)}
+        >
+          <VisibilityIcon />
+        </IconButton>
       </Tooltip>
     );
   };
@@ -67,6 +69,7 @@ const ViewTradingPartner = () => {
 
   const rowData = filteredData.map((item: any) => ({
     ...item,
+    action: renderAction(item),
     effectiveDate: new Date(item.effectiveDate).toLocaleString(),
   }));
 
@@ -117,6 +120,7 @@ const ViewTradingPartner = () => {
 
 const apiData = [
   {
+    id: "c96563eb-f12c-4ab7-a198-61e7329ddaa2",
     tradingPartnerName: "Walmart",
     businessUnit: "Hospital Finance Department ",
     contactName: "Walgreens",
@@ -130,6 +134,7 @@ const apiData = [
     effectiveDate: 1738713600000,
   },
   {
+    id: "5f632fda-305f-495c-9d48-2b01b8ce94f5",
     tradingPartnerName: "CVS",
     businessUnit: "Hospital Ordering Department",
     contactName: "Walgreens",

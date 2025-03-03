@@ -15,6 +15,8 @@ import UpdateContact from "../views/TradingPartner/UpdateContact";
 import Support from "../views/TradingPartner/Support";
 import ListHostKey from "../views/SystemAdmin/HostKeyManagement";
 import KeyManagement from "../views/BusinessAdmin/KeyManagement";
+import AddUpdateClientKey from "../views/TradingPartner/ClientKeyManagement/AddUpdateClientKey";
+import ViewTradingPartnerDetails from "../views/SystemAdmin/TradingPartner/ViewTradingPartner";
 
 export default function AppRoutes() {
   const { role } = useSelector((state) => state?.user);
@@ -24,6 +26,7 @@ export default function AppRoutes() {
     if (role === "System Administrator") return "/host-key-management";
     if (role === "Business Administrator") return "/trading-partner";
     if (role === "Trading Partner") return "/download";
+    if (role === "Report User") return "/report-list";
     return "/"; // Default route
   };
 
@@ -42,6 +45,10 @@ export default function AppRoutes() {
         <Route path="/sftp-key-management" element={<KeyManagement />} />
         <Route path="/trading-partner" element={<TradingPartnerList />} />
         <Route path="/view-trading-partner" element={<ViewTradingPartner />} />
+        <Route
+          path="/view/trading-partner/:partner-id"
+          element={<ViewTradingPartnerDetails />}
+        />
         <Route path="/add/trading_partner" element={<AddTradingPartner />} />
         <Route path="/instructions" element={<Instructions />} />
         <Route path="/search-ba" element={<UsersList />} />
@@ -53,6 +60,11 @@ export default function AppRoutes() {
           path="/client-key-management"
           element={<ClientKeyManagement />}
         />
+        <Route
+          path="/update/client_key/:client_id"
+          element={<AddUpdateClientKey />}
+        />
+        <Route path="/add/client_key" element={<AddUpdateClientKey />} />
         <Route path="/client-partners" element={<ClientPartners />} />
         <Route
           path="*"

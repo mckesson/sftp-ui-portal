@@ -1,90 +1,66 @@
-import { ChangeEvent, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  FormControlLabel,
   Grid2 as Grid,
-  InputAdornment,
-  InputLabel,
-  Radio,
-  RadioGroup,
+  IconButton,
   TextField,
+  Tooltip,
   Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
 } from "@mui/material";
-import { useFormik } from "formik";
 import Container from "../../../components/Container";
-import Popup from "../../../components/Popup";
-import { keyValidation } from "../../../utils";
-import { NoDataFound, Separator } from "../../../components/Divider";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
-interface FormValues {
-  data: {
-    sftpLoginId: string;
-    auth_type: string;
-    password: string;
-    keyFile: File | undefined;
-  }[];
-}
+import { Separator } from "../../../components/Divider";
+import SearchIcon from "@mui/icons-material/Search";
+import { SearchButton } from "../../../shared/SearchButton";
+import { Add } from "@mui/icons-material";
+import Table from "../../../shared/Table";
+import { useNavigate } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit";
 
 export default function ClientKeyManagement() {
-  const [passwordGen, setPasswordGen] = useState(false);
-  const [index, setIndex] = useState(0);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
-  const [expandedIndex, setExpandedIndex] = useState<number | false>(0);
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState(apiData);
 
-  const sftpData = [
-    {
-      sftpLoginId: "jbu3470",
-    },
-    {
-      sftpLoginId: "efg2456",
-    },
+  useEffect(() => {
+    if (searchQuery === "") {
+      setFilteredData(apiData);
+    }
+  }, [searchQuery]);
+
+  const columns = [
+    { id: "sftpId", name: "SFTP ID" },
+    { id: "tpName", name: "Trading Partner Name" },
+    { id: "authType", name: "Auth Type" },
+    { id: "action", name: "#", align: "right" },
   ];
 
-  // Function to handle form submission for each sftpLoginId
-  const handleUploadKey = (data: any) => {
-    console.log(data);
-    setUploadSuccess(true);
+  const handleSearch = () => {
+    const query = searchQuery.toLowerCase();
+    const result = apiData.filter((item) => {
+      return item.sftpId.toLowerCase().includes(query);
+    });
+    setFilteredData(result);
   };
 
-  const handleFileChange = (
-    event: ChangeEvent<HTMLInputElement>,
-    index: number
-  ) => {
-    const selectedFile = event.target.files ? event.target.files[0] : null;
-    keyForm.setFieldValue(`data[${index}].keyFile`, selectedFile);
+  const renderAction = (item) => {
+    return (
+      <Tooltip title="Update" arrow>
+        <IconButton
+          className="update-icon"
+          onClick={() => navigate(`/update/client_key/${item.id}`)}
+        >
+          <EditIcon />
+        </IconButton>
+      </Tooltip>
+    );
   };
 
-  const closeGeneration = (index: number) => {
-    const generatedPassword = Math.random().toString(36).slice(-8);
-    keyForm.setFieldValue(`data[${index}].password`, generatedPassword);
-    setPasswordGen(false);
-    setIndex(0);
-  };
-
-  // Formik definition
-  const keyForm = useFormik<FormValues>({
-    initialValues: {
-      data: sftpData.map((item) => ({
-        sftpLoginId: item.sftpLoginId,
-        auth_type: "password",
-        password: "",
-        keyFile: undefined,
-      })),
-    },
-    validationSchema: keyValidation,
-    onSubmit: handleUploadKey,
-  });
-
-  // Toggle expansion on click
-  const handleAccordionChange = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? false : index);
-  };
+  const rowData = filteredData.map((item: any) => ({
+    ...item,
+    effectiveDate: new Date(item.effectiveDate).toLocaleString(),
+    action: renderAction(item),
+  }));
 
   return (
     <div className="home-page">
@@ -94,177 +70,67 @@ export default function ClientKeyManagement() {
             Client Key Management
           </Typography>
           <Separator />
-
-          <Grid container spacing={2}>
-            {keyForm.values.data.length > 0 ? (
-              keyForm.values.data.map((item, index) => (
-                <Grid size={{ xs: 12, sm: 12 }} key={item.sftpLoginId}>
-                  <Accordion
-                    expanded={expandedIndex === index}
-                    onChange={() => handleAccordionChange(index)}
-                  >
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls={`${item.sftpLoginId}-content`}
-                      id={`${item.sftpLoginId}-header`}
-                    >
-                      <Typography variant="h6">
-                        sFTP Login Id : {item.sftpLoginId}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <form onSubmit={keyForm.handleSubmit}>
-                        <Grid container spacing={1} className="form-grid">
-                          <Grid size={{ xs: 2, sm: 2 }}>
-                            <InputLabel htmlFor={`data[${index}].auth_type`}>
-                              Auth Type*:
-                            </InputLabel>
-                          </Grid>
-                          <Grid size={{ xs: 10, sm: 10 }}>
-                            <RadioGroup
-                              row
-                              name={`data[${index}].auth_type`}
-                              id={`data[${index}].auth_type`}
-                              value={item.auth_type}
-                              onChange={keyForm.handleChange}
-                            >
-                              <FormControlLabel
-                                value="password"
-                                control={<Radio />}
-                                label="Password"
-                              />
-                              <FormControlLabel
-                                value="key"
-                                control={<Radio />}
-                                label="Key"
-                              />
-                            </RadioGroup>
-                          </Grid>
-
-                          <Grid size={{ xs: 2, sm: 2 }}>
-                            <InputLabel
-                              htmlFor={
-                                item.auth_type === "password"
-                                  ? "password:"
-                                  : "keyFile"
-                              }
-                            >
-                              {item.auth_type === "password"
-                                ? "Enter Password*:"
-                                : "Client Key*:"}
-                            </InputLabel>
-                          </Grid>
-                          <Grid size={{ xs: 10, sm: 10 }}>
-                            {item.auth_type === "password" ? (
-                              <TextField
-                                fullWidth
-                                id={`data[${index}].password`}
-                                name={`data[${index}].password`}
-                                size="small"
-                                placeholder="Enter Your Password"
-                                value={item.password}
-                                onChange={keyForm.handleChange}
-                                error={
-                                  keyForm.touched.data?.[index]?.password &&
-                                  Boolean(
-                                    keyForm.errors.data?.[index]?.password
-                                  )
-                                }
-                                helperText={
-                                  keyForm.touched.data?.[index]?.password &&
-                                  keyForm.errors.data?.[index]?.password
-                                }
-                                InputProps={{
-                                  endAdornment: (
-                                    <InputAdornment position="end">
-                                      <Button
-                                        className="generate-btn"
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => {
-                                          setPasswordGen(true);
-                                          setIndex(index);
-                                        }}
-                                        size="small"
-                                      >
-                                        Generate Password
-                                      </Button>
-                                    </InputAdornment>
-                                  ),
-                                }}
-                              />
-                            ) : (
-                              <TextField
-                                fullWidth
-                                size="small"
-                                type="file"
-                                name={`data[${index}].keyFile`}
-                                onChange={(e) => handleFileChange(e, index)}
-                                error={
-                                  keyForm.touched.data?.[index]?.keyFile &&
-                                  Boolean(keyForm.errors.data?.[index]?.keyFile)
-                                }
-                                helperText={
-                                  keyForm.touched.data?.[index]?.keyFile &&
-                                  keyForm.errors.data?.[index]?.keyFile
-                                }
-                              />
-                            )}
-                          </Grid>
-
-                          <Grid size={12} className="submit-div">
-                            <Button
-                              type="submit"
-                              fullWidth
-                              className="btn-submit"
-                            >
-                              {item.auth_type === "password"
-                                ? "Update"
-                                : "Upload"}
-                            </Button>
-                            <Button
-                              className="btn-clear"
-                              onClick={() => {
-                                keyForm.resetForm();
-                              }}
-                              fullWidth
-                            >
-                              Cancel
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </form>
-                    </AccordionDetails>
-                  </Accordion>
-                </Grid>
-              ))
-            ) : (
-              <Grid size={{ xs: 12, sm: 12 }}>
-                <NoDataFound>Host Key Not Found</NoDataFound>
-              </Grid>
-            )}
+          <Grid container>
+            <Grid
+              size={12}
+              sx={{
+                justifyContent: "flex-end",
+                display: "flex",
+                marginBottom: "20px",
+              }}
+            >
+              <Button
+                className="add-btn"
+                startIcon={<Add />}
+                onClick={() => navigate("/add/client_key")}
+              >
+                Add Client Key
+              </Button>
+            </Grid>
           </Grid>
-          <Popup
-            success
-            open={passwordGen}
-            cancelButton="OK"
-            confirmButton="OK"
-            body="Password generation is complete. Kindly save it before uploading."
-            handleSuccess={() => closeGeneration(index)}
-          />
-
-          <Popup
-            success
-            open={uploadSuccess}
-            cancelButton="OK"
-            confirmButton="OK"
-            body="Password/Key Successfully Updated"
-            handleSuccess={() => {
-              setUploadSuccess(false);
-            }}
-          />
+          <Grid
+            container
+            spacing={0}
+            sx={{ marginBottom: "16px", marginTop: "16px" }}
+          >
+            <Grid size={{ xs: 6, sm: 6 }}>
+              <TextField
+                fullWidth
+                placeholder="Search SFTP Login ID"
+                variant="outlined"
+                size="small"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </Grid>
+            <Grid size={{ xs: 2, sm: 2 }}>
+              <SearchButton disableRipple onClick={handleSearch}>
+                <SearchIcon />
+              </SearchButton>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <Table pagination columns={columns} data={rowData} />
+            </Grid>
+          </Grid>
         </Box>
       </Container>
     </div>
   );
 }
+
+const apiData = [
+  {
+    id: "9eb84cf0-fa18-4141-80b9-5deb092056ff",
+    tpName: "Walmart",
+    sftpId: "eid001",
+    authType: "Password",
+  },
+  {
+    id: "5ad0e2cd-fe4a-40a2-83f4-21994615a6d8",
+    tpName: "Walmart",
+    sftpId: "eid002",
+    authType: "Client Key",
+  },
+];

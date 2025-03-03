@@ -124,9 +124,7 @@ const Table = ({
                       <TableCell
                         key={col.id}
                         align={col.align}
-                        onClick={() =>
-                          col.id === "clientPartnerName" && onRowClick?.(row)
-                        }
+                        onClick={() => onRowClick?.(row)}
                       >
                         {row[col.id]}
                       </TableCell>

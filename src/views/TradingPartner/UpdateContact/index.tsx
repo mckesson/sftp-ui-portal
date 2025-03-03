@@ -62,6 +62,25 @@ export default function UpdateContact() {
           <form onSubmit={updateForm.handleSubmit}>
             <Grid container spacing={2} className="form-grid">
               <Grid size={{ xs: 2, sm: 2 }}>
+                <InputLabel htmlFor="sftpLoginId">SFTP Login ID*:</InputLabel>
+              </Grid>
+              <Grid size={{ xs: 10, sm: 10 }}>
+                {/* <TextField
+                  fullWidth
+                  placeholder="Enter SFTP Login ID"
+                  size="small"
+                  id="sftpLoginId"
+                  name="sftpLoginId"
+                  value={updateForm.values.sftpLoginId}
+                  slotProps={{
+                    input: {
+                      readOnly: true,
+                    },
+                  }}
+                /> */}
+                <Typography>{updateForm.values.sftpLoginId}</Typography>
+              </Grid>
+              <Grid size={{ xs: 2, sm: 2 }}>
                 <InputLabel htmlFor="firstName">First Name*:</InputLabel>
               </Grid>
               <Grid size={{ xs: 10, sm: 10 }}>
@@ -151,44 +170,7 @@ export default function UpdateContact() {
                   }
                 />
               </Grid>
-              <Grid size={{ xs: 2, sm: 2 }}>
-                <InputLabel htmlFor="sftpLoginId">SFTP Login ID*:</InputLabel>
-              </Grid>
-              <Grid size={{ xs: 10, sm: 10 }}>
-                <TextField
-                  fullWidth
-                  placeholder="Enter SFTP Login ID"
-                  size="small"
-                  id="sftpLoginId"
-                  name="sftpLoginId"
-                  value={updateForm.values.sftpLoginId}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid size={{ xs: 2, sm: 2 }}>
-                <InputLabel htmlFor="cimsPartnerId">
-                  CIMS Partner ID*:
-                </InputLabel>
-              </Grid>
-              <Grid size={{ xs: 10, sm: 10 }}>
-                <TextField
-                  fullWidth
-                  placeholder="Enter CIMS Partner ID"
-                  size="small"
-                  id="cimsPartnerId"
-                  name="cimsPartnerId"
-                  value={updateForm.values.cimsPartnerId}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                />
-              </Grid>
+
               <Grid size={{ xs: 2, sm: 2 }}>
                 <InputLabel htmlFor="role">Role*:</InputLabel>
               </Grid>
