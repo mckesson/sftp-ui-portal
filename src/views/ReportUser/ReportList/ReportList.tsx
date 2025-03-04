@@ -1,134 +1,161 @@
 import Table from "../../../shared/Table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "../../../components/Container";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Grid2 as Grid, TextField } from "@mui/material";
 import { Separator } from "../../../components/Divider";
+import { SearchButton } from "../../../shared/SearchButton";
+import SearchIcon from "@mui/icons-material/Search";
 
 export default function ReportList() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredData, setFilteredData] = useState(initialData);
 
   const columns = [
+    { name: "sFTP Login ID", id: "sftpUserId", key: "sftpUserId" },
+    { name: "Status", id: "status", key: "status" },
+    { name: "Assignee", id: "assignee", key: "assignee" },
+    { name: "Date Moved to Current Status", id: "dateMoved", key: "dateMoved" },
     {
-      name: "Log Level",
-      id: "logLevel",
-      key: "logLevel",
+      name: "Transitioned/Complete Date",
+      id: "transitionDate",
+      key: "transitionDate",
+    },
+    { name: "Done Date", id: "doneDate", key: "doneDate" },
+    { name: "TP_NAM", id: "tpNam", key: "tpNam" },
+    {
+      name: "Comments/Notes (Include blockers)",
+      id: "comments",
+      key: "comments",
+    },
+    { name: "CIMS_PRTNR_ID", id: "cimsPrtnrId", key: "cimsPrtnrId" },
+    { name: "Third Party Name", id: "thirdPartyName", key: "thirdPartyName" },
+    {
+      name: "Third Party - Primary Contact Name",
+      id: "thirdPartyContact",
+      key: "thirdPartyContact",
     },
     {
-      name: "Message",
-      id: "message",
-      key: "message",
+      name: "Third Party - Email Address",
+      id: "thirdPartyEmail",
+      key: "thirdPartyEmail",
     },
     {
-      name: "Details",
-      id: "details",
-      key: "details",
+      name: "Third Party - Phone Number",
+      id: "thirdPartyPhone",
+      key: "thirdPartyPhone",
     },
     {
-      name: "Timestamp",
-      id: "timestamp",
-      key: "timestamp",
-      render: (text: string) => new Date(text).toLocaleString(),
+      name: "Customer - Primary Contact Name",
+      id: "customerContact",
+      key: "customerContact",
     },
-  ];
-
-  const initialData = [
+    { name: "Customer Email", id: "customerEmail", key: "customerEmail" },
     {
-      timestamp: "2025-02-01T10:15:00Z",
-      logLevel: "UPLOAD",
-      message: "Host key uploaded",
-      details: "User ID: 12345, IP: 192.168.1.1",
-    },
-    {
-      timestamp: "2025-02-01T10:17:00Z",
-      logLevel: "DOWNLOAD",
-      message: "Host key downloaded",
-      details: "Server: srv001, Disk space: 2GB left",
-    },
-    {
-      timestamp: "2025-02-01T10:18:00Z",
-      logLevel: "UPLOAD",
-      message: "Host key uploaded",
-      details: "Error Code: 502, DB: db001",
-    },
-    {
-      timestamp: "2025-02-01T10:19:00Z",
-      logLevel: "REVIEW",
-      message: "Host key reviewed by system admin",
-      details: "File ID: 54321, File size: 10MB",
-    },
-    {
-      timestamp: "2025-02-01T10:20:00Z",
-      logLevel: "UPLOAD",
-      message: "Host key uploaded",
-      details: "User ID: 67890, Session Duration: 2 hours",
-    },
-    {
-      timestamp: "2025-02-01T10:21:00Z",
-      logLevel: "REVIEW",
-      message: "Host key reviewed by system admin",
-      details: "Service: payment-service, Timeout: 15 seconds",
-    },
-    {
-      timestamp: "2025-02-01T10:22:00Z",
-      logLevel: "UPLOAD",
-      message: "Host key uploaded",
-      details: "User ID: 23456, IP: 192.168.2.1",
-    },
-    {
-      timestamp: "2025-02-01T10:23:00Z",
-      logLevel: "REVIEW",
-      message: "Host key reviewed by system admin",
-      details: "Backup ID: 98765, Status: Successful",
-    },
-    {
-      timestamp: "2025-02-01T10:24:00Z",
-      logLevel: "DOWNLOAD",
-      message: "Host key downloaded",
-      details: "API: payment-api, Attempts: 100 requests/minute",
+      name: "Customer - Phone Number",
+      id: "customerPhone",
+      key: "customerPhone",
     },
   ];
 
-  const filteredData = initialData.filter((item) => {
-    return (
-      item.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.details.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  });
+  useEffect(() => {
+    if (searchQuery === "") {
+      setFilteredData(initialData);
+    }
+  }, [searchQuery]);
+
+  //Function to search data.
+  const handleSearch = () => {
+    const query = searchQuery.toLowerCase();
+    const result = initialData.filter((item) => {
+      return item.sftpUserId.toLowerCase().includes(query);
+    });
+    setFilteredData(result);
+  };
+
+  //Table rows.
+  const rowData = filteredData.map((item: any) => ({
+    ...item,
+  }));
 
   return (
     <div className="home-page">
       <Container>
         <Box className="content-body">
-          <Typography variant="h4" gutterBottom className="heading">
-            Recent Activity
-          </Typography>
-          <Separator />
-          <input
-            type="text"
-            placeholder="Search activity..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Table pagination columns={columns} data={filteredData} />
+          <Grid container spacing={2} sx={{ alignItems: "center" }}>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <Typography variant="h4" gutterBottom className="heading">
+                Reports
+              </Typography>
+              <Separator />
+            </Grid>
+          </Grid>
+          <Grid
+            container
+            spacing={0}
+            sx={{ marginBottom: "16px", marginTop: "16px" }}
+          >
+            <Grid size={{ xs: 6, sm: 6 }}>
+              <TextField
+                fullWidth
+                placeholder="Search SFTP Login ID, Contact Name or Email ID"
+                variant="outlined"
+                size="small"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </Grid>
+            <Grid size={{ xs: 2, sm: 2 }}>
+              <SearchButton disableRipple onClick={handleSearch}>
+                <SearchIcon />
+              </SearchButton>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <Table pagination columns={columns} data={rowData} />
+            </Grid>
+          </Grid>
         </Box>
-        {/* <Divider sx={{ margin: "20px 0" }} />
-          <div className="announcements">
-            <Typography variant="h4" gutterBottom>
-              Announcements
-            </Typography>
-            <List>
-              {announcements.map((announcement) => (
-                <ListItem key={announcement.id}>
-                  <ListItemText
-                    primary={<strong>{announcement.title}</strong>}
-                    secondary={announcement.content}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </div> */}
-        {/* </div> */}
       </Container>
     </div>
   );
 }
+
+const initialData = [
+  {
+    sftpUserId: "U12345",
+    status: "Active",
+    assignee: "John Doe",
+    dateMoved: "2025-02-01",
+    transitionDate: "2025-02-05",
+    doneDate: "2025-02-10",
+    tpNam: "TP001",
+    comments: "No blockers",
+    cimsPrtnrId: "CIMS123",
+    thirdPartyName: "Third Party A",
+    thirdPartyContact: "Alice Smith",
+    thirdPartyEmail: "alice@example.com",
+    thirdPartyPhone: "+1-555-1234",
+    customerContact: "Bob Johnson",
+    customerEmail: "bob@example.com",
+    customerPhone: "+1-555-5678",
+  },
+  {
+    sftpUserId: "U67890",
+    status: "Pending",
+    assignee: "Jane Doe",
+    dateMoved: "2025-02-02",
+    transitionDate: "2025-02-06",
+    doneDate: "2025-02-11",
+    tpNam: "TP002",
+    comments: "Waiting for approval",
+    cimsPrtnrId: "CIMS456",
+    thirdPartyName: "Third Party B",
+    thirdPartyContact: "Charlie Brown",
+    thirdPartyEmail: "charlie@example.com",
+    thirdPartyPhone: "+1-555-9876",
+    customerContact: "Eve Adams",
+    customerEmail: "eve@example.com",
+    customerPhone: "+1-555-4321",
+  },
+];
