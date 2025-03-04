@@ -24,14 +24,12 @@ const UsersList = () => {
   const [deletePopup, setDeletePopup] = useState(false);
 
   const columns = [
-    { id: "userId", name: "User ID/EID", width: 100 },
+    { id: "userId", name: "User ID/EID" },
     { id: "fullName", name: "Full Name", width: 180 },
     { id: "role", name: "Role", width: 150 },
-    { id: "permissions", name: "Permissions", width: 180 },
     {
       id: "accountActivationDate",
       name: "Account Activation Date",
-      width: 180,
     },
     { id: "email", name: "Email Address", width: 200 },
     { id: "phone", name: "Phone Number", width: 160 },
@@ -82,8 +80,10 @@ const UsersList = () => {
   const rowData = filteredData.map((item: any) => ({
     ...item,
     action: renderAction(item),
-    accountActivationDate: new Date(item.accountActivationDate).toISOString(),
-    lastLoginTime: new Date(item.lastLoginTime).toISOString(),
+    accountActivationDate: new Date(
+      item.accountActivationDate
+    ).toLocaleString(),
+    lastLoginTime: new Date(item.lastLoginTime).toLocaleString(),
   }));
 
   return (

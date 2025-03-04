@@ -6,6 +6,9 @@ import {
   InputLabel,
   Typography,
   Box,
+  Autocomplete,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { Add, Remove } from "@mui/icons-material";
@@ -92,7 +95,7 @@ export default function AddTradingPartner() {
       ...partnerForm.values,
       cimsPartnerIds: [
         ...partnerForm.values.cimsPartnerIds,
-        { loginId: "", partnerId: "" },
+        { loginId: [], partnerId: "" },
       ],
     });
   };
@@ -396,19 +399,38 @@ export default function AddTradingPartner() {
                 {partnerForm.values.cimsPartnerIds.map((item, index) => (
                   <Grid container key={index} spacing={2}>
                     <Grid size={5} className="mb-10">
-                      <TextField
-                        fullWidth
-                        placeholder="Enter sFTP Login ID"
-                        size="small"
-                        value={item.loginId}
-                        onChange={(e) => {
-                          const newIds = [...partnerForm.values.cimsPartnerIds];
-                          newIds[index].loginId = e.target.value;
+                      <Autocomplete
+                        multiple
+                        freeSolo
+                        options={["user1", "user2", "user3", "user4", "user5"]} // Random login options
+                        value={item.loginIds}
+                        onChange={(event, newValue) => {
+                          const newIds = [...partnerForm.values.sftpLoginIds];
+                          // This should be cimsPartnerIds, not sftpLoginIds
+                          if (!newIds[index]) {
+                            newIds[index] = { loginIds: [] }; // Initialize with an empty array
+                          }
+                          newIds[index].loginIds = newValue || [];
+                          // Ensure that the correct field is being updated
                           partnerForm.setValues({
                             ...partnerForm.values,
-                            cimsPartnerIds: newIds,
+                            sftpLoginIds: newIds, // This should be cimsPartnerIds
                           });
                         }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder="Select sFTP Login IDs"
+                            size="small"
+                            fullWidth
+                          />
+                        )}
+                        renderOption={(props, option, state) => (
+                          <li {...props}>
+                            <Checkbox checked={state.selected} />
+                            <ListItemText primary={option} />
+                          </li>
+                        )}
                       />
                     </Grid>
                     <Grid size={5}>

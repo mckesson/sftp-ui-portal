@@ -2,11 +2,13 @@ import {
   Box,
   Button,
   Grid2 as Grid,
+  IconButton,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import Container from "../../../components/Container";
-import { Add } from "@mui/icons-material";
+import { Add, Download } from "@mui/icons-material";
 import { Separator } from "../../../components/Divider";
 import { useNavigate } from "react-router-dom";
 import Table from "../../../shared/Table";
@@ -28,6 +30,7 @@ export default function ListHostKey() {
     { id: "effectiveDate", name: "Effective Date" },
     { id: "expiryDate", name: "Expiry Date" },
     { id: "type", name: "Key Status" },
+    { id: "download", name: "Download", align: "right" },
   ];
 
   useEffect(() => {
@@ -44,11 +47,34 @@ export default function ListHostKey() {
     setFilteredData(result);
   };
 
+  //Function to download sample .pem file.
+  const handleDownload = () => {
+    const fileUrl = "/sample.pem";
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.setAttribute("download", "sample.pem");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  //Download button for host key download.
+  const renderDownload = (item: any) => {
+    return (
+      <Tooltip arrow title="Download Host Key">
+        <IconButton className="update-icon" onClick={handleDownload}>
+          <Download className="action-icons" />
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
   const rowData = filteredData.map((item: any) => ({
     ...item,
     effectiveDate: new Date(item.effectiveDate).toLocaleString(),
     type: getTypeForYear(new Date(item.effectiveDate).toLocaleString()),
     expiryDate: addOneYear(item.effectiveDate),
+    download: renderDownload(item),
   }));
 
   return (

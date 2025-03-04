@@ -5,6 +5,11 @@
   background-color: #FFF;
 }
 
+@media (max-width: 600px) {
+  #root {
+    width: auto;
+  }
+}
 
 .row{
   display: grid;

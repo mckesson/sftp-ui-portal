@@ -24,15 +24,11 @@ const ViewTradingPartner = () => {
   const columns = [
     { id: "tradingPartnerName", name: "Trading Partner Name" },
     { id: "businessUnit", name: "Business Unit" },
-    // { id: "contactName", name: "Contact Person Name" },
-    // { id: "emailId", name: "Email ID" },
-    // { id: "phone", name: "Contact Phone No" },
-    // { id: "role", name: "Role" },
     { id: "sftpLoginId", name: "SFTP Login ID" },
     { id: "authMethod", name: "Authentication Method " },
     { id: "cimsPartnerId", name: "CIMS partner ID " },
     { id: "effectiveDate", name: "Effective Date" },
-    { id: "hostKeyVersion", name: "Host Key Version" },
+    { id: "url", name: "URL" },
     { id: "action", name: "#", align: "right" },
   ];
 
@@ -130,7 +126,7 @@ const apiData = [
     sftpLoginId: "eid001",
     authMethod: "Password",
     cimsPartnerId: "ehd002",
-    hostKeyVersion: "v2",
+    url: "www.sftp.edi.mckesson.com",
     effectiveDate: 1738713600000,
   },
   {
@@ -144,7 +140,7 @@ const apiData = [
     sftpLoginId: "eid001",
     authMethod: "Password, Client Key",
     cimsPartnerId: "ehd002",
-    hostKeyVersion: "v3",
+    url: "www.sftp.edi.mckesson.com",
     effectiveDate: 1738886400000,
   },
 ];
