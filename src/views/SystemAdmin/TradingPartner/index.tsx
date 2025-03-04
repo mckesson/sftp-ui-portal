@@ -49,7 +49,7 @@ const ViewTradingPartner = () => {
           className="update-icon"
           onClick={() => navigate(`/view/trading-partner/${item.id}`)}
         >
-          <VisibilityIcon />
+          <VisibilityIcon className="action-icons" />
         </IconButton>
       </Tooltip>
     );

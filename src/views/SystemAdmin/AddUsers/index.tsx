@@ -1,14 +1,27 @@
 import Container from "../../../components/Container";
-import { Box, Grid2 as Grid, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid2 as Grid,
+  IconButton,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import Table from "../../../shared/Table";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import { SearchButton } from "../../../shared/SearchButton";
 import { Separator } from "../../../components/Divider";
+import { Add, DeleteForever, Edit } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import Popup from "../../../components/Popup";
 
 const UsersList = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(apiData);
+  const [deletePopup, setDeletePopup] = useState(false);
 
   const columns = [
     { id: "userId", name: "User ID/EID", width: 100 },
@@ -22,7 +35,7 @@ const UsersList = () => {
     },
     { id: "email", name: "Email Address", width: 200 },
     { id: "phone", name: "Phone Number", width: 160 },
-    // { id: "lastLoginTime", name: "Last Login Time", width: 160 },
+    { id: "action", name: "#", align: "right" },
   ];
 
   useEffect(() => {
@@ -43,8 +56,32 @@ const UsersList = () => {
     setFilteredData(result);
   };
 
+  const renderAction = (item: any) => {
+    return (
+      <Box className="action-gap">
+        <Tooltip title="Update" arrow>
+          <IconButton
+            className="update-icon"
+            onClick={() => navigate(`/search-ba/update/${item.userId}`)}
+          >
+            <Edit className="action-icons" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete" arrow>
+          <IconButton
+            className="update-icon"
+            onClick={() => setDeletePopup(true)}
+          >
+            <DeleteForever className="delete-icon" />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    );
+  };
+
   const rowData = filteredData.map((item: any) => ({
     ...item,
+    action: renderAction(item),
     accountActivationDate: new Date(item.accountActivationDate).toISOString(),
     lastLoginTime: new Date(item.lastLoginTime).toISOString(),
   }));
@@ -59,6 +96,24 @@ const UsersList = () => {
                 User Overview
               </Typography>
               <Separator />
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid
+              size={12}
+              sx={{
+                justifyContent: "flex-end",
+                display: "flex",
+                marginBottom: "20px",
+              }}
+            >
+              <Button
+                className="add-btn"
+                startIcon={<Add />}
+                onClick={() => navigate("/search-ba/add")}
+              >
+                Add User
+              </Button>
             </Grid>
           </Grid>
           <Grid
@@ -88,7 +143,15 @@ const UsersList = () => {
             </Grid>
           </Grid>
         </Box>
-        {/* </div> */}
+        <Popup
+          close
+          open={deletePopup}
+          body="Are you sure, You want to delete this data?"
+          handleSuccess={() => setDeletePopup(false)}
+          handleClose={() => setDeletePopup(false)}
+          confirmButton="Delete"
+          cancelButton="Close"
+        />
       </Container>
     </div>
   );

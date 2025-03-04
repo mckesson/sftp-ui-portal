@@ -30,7 +30,7 @@ export const ModalIcon = styled(ErrorOutline)({
 export const StyledDialogActions = styled(DialogActions)({
   display: "flex !important",
   justifyContent: "center !important",
-  marginBottom: "2px",
+  marginBottom: "12px",
 });
 
 export const StyledDialogContentText = styled(DialogContentText)({

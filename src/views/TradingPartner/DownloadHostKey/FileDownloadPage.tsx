@@ -6,6 +6,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  IconButton,
 } from "@mui/material";
 import Container from "../../../components/Container";
 import { Download, ExpandMore } from "@mui/icons-material";
@@ -20,20 +21,33 @@ export default function FileDownloadPage() {
 
   //Table column.
   const columns = [
-    { id: "type", name: "Key Status", width: 80 },
-    { id: "keyType", name: "Key Type", width: 80 },
-    { id: "keyLength", name: "Key Length", width: 80 },
+    { id: "type", name: "Key Status" },
+    { id: "keyType", name: "Key Type" },
+    { id: "keyLength", name: "Key Length", width: 120 },
     { id: "version", name: "Version" },
-    { id: "effectiveDate", name: "Effective Date", width: 80 },
+    { id: "effectiveDate", name: "Effective Date" },
     { id: "expiryDate", name: "Expiry Date" },
     { id: "download", name: "Download", align: "center" },
   ];
+
+  //Function to download sample .pem file.
+  const handleDownload = () => {
+    const fileUrl = "/sample.pem";
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.setAttribute("download", "sample.pem");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   //Download host key button.
   const renderDownload = (item: any) => {
     return (
       <Tooltip arrow title="Download Host Key">
-        <Download sx={{ color: "#000" }} />
+        <IconButton className="update-icon" onClick={handleDownload}>
+          <Download className="action-icons" />
+        </IconButton>
       </Tooltip>
     );
   };

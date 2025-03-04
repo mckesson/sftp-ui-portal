@@ -41,8 +41,8 @@ export const menuItems = [
         path: "/client-key-management",
       },
       {
-        label: "Update Contact",
-        path: "/update-contact",
+        label: "Contact Details",
+        path: "/contact-list",
       },
       {
         label: "Support",

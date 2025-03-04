@@ -5,32 +5,35 @@ import {
   TextField,
   Typography,
   Button,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Table from "../../../shared/Table";
-import { Add } from "@mui/icons-material";
+import { Add, DeleteForever, Edit } from "@mui/icons-material";
 import { SearchButton } from "../../../shared/SearchButton";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Separator } from "../../../components/Divider";
+import Popup from "../../../components/Popup";
 
 const TradingPartnerList = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(apiData);
+  const [deletePopup, setDeletePopup] = useState(false);
 
+  //Table columns.
   const columns = [
     { id: "tradingPartnerName", name: "Trading Partner Name" },
     { id: "businessUnit", name: "Business Unit" },
-    { id: "contactName", name: "Contact Person Name" },
-    { id: "emailId", name: "Email ID" },
-    { id: "phone", name: "Contact Phone No" },
-    { id: "role", name: "Role" },
     { id: "sftpLoginId", name: "SFTP Login ID" },
     { id: "authMethod", name: "Authentication Method " },
     { id: "cimsPartnerId", name: "CIMS partner ID " },
     { id: "effectiveDate", name: "Effective Date" },
     { id: "hostKeyVersion", name: "Host Key Version" },
+    { id: "action", name: "#", align: "right" },
   ];
 
   useEffect(() => {
@@ -39,6 +42,7 @@ const TradingPartnerList = () => {
     }
   }, [searchQuery]);
 
+  //Function to search data.
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
     const result = apiData.filter((item) => {
@@ -51,8 +55,42 @@ const TradingPartnerList = () => {
     setFilteredData(result);
   };
 
+  //Table actions.
+  const renderAction = (item: any) => {
+    return (
+      <Box className="action-gap">
+        <Tooltip title="Update" arrow>
+          <IconButton
+            className="update-icon"
+            onClick={() => navigate(`/update/trading_partner/${item.id}`)}
+          >
+            <Edit className="action-icons" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="View" arrow>
+          <IconButton
+            className="update-icon"
+            onClick={() => navigate(`/view/trading-partner/${item.id}`)}
+          >
+            <VisibilityIcon className="action-icons" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete" arrow>
+          <IconButton
+            className="update-icon"
+            onClick={() => setDeletePopup(true)}
+          >
+            <DeleteForever className="delete-icon" />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    );
+  };
+
+  //Table rows.
   const rowData = filteredData.map((item: any) => ({
     ...item,
+    action: renderAction(item),
     effectiveDate: new Date(item.effectiveDate).toLocaleString(),
   }));
 
@@ -113,6 +151,15 @@ const TradingPartnerList = () => {
             </Grid>
           </Grid>
         </Box>
+        <Popup
+          close
+          open={deletePopup}
+          body="Are you sure, You want to delete this data?"
+          handleSuccess={() => setDeletePopup(false)}
+          handleClose={() => setDeletePopup(false)}
+          confirmButton="Delete"
+          cancelButton="Close"
+        />
       </Container>
     </div>
   );
@@ -120,6 +167,7 @@ const TradingPartnerList = () => {
 
 const apiData = [
   {
+    id: "c96563eb-f12c-4ab7-a198-61e7329ddaa2",
     tradingPartnerName: "Walmart",
     businessUnit: "Hospital Finance Department ",
     contactName: "Walgreens",
@@ -133,6 +181,7 @@ const apiData = [
     effectiveDate: 1738713600000,
   },
   {
+    id: "5f632fda-305f-495c-9d48-2b01b8ce94f5",
     tradingPartnerName: "CVS",
     businessUnit: "Hospital Ordering Department",
     contactName: "Walgreens",
@@ -146,5 +195,4 @@ const apiData = [
     effectiveDate: 1738886400000,
   },
 ];
-
 export default TradingPartnerList;

@@ -18,8 +18,8 @@ interface Column {
   id: string;
   name: string;
   align?: "inherit" | "left" | "center" | "right" | "justify";
-  width?: string;
-  minWidth?: string;
+  width?: number;
+  minWidth?: number;
 }
 
 interface TableProps<T> {

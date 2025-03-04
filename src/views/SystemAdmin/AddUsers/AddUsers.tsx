@@ -13,9 +13,11 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import Container from "../../../components/Container";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Separator } from "../../../components/Divider";
 
 const AddUsers = () => {
+  const { user_id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
@@ -86,18 +88,19 @@ const AddUsers = () => {
   return (
     <div className="home-page">
       <Container>
-        <div className="page-content">
-          {/* <Typography variant="h5" gutterBottom>
-            User Information
-          </Typography> */}
+        <Box className="content-body">
+          <Grid container spacing={2} sx={{ alignItems: "center" }}>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <Typography variant="h4" gutterBottom className="heading">
+                {!user_id
+                  ? " Add Business Users/Managers"
+                  : "Update Business Users/Managers"}
+              </Typography>
+              <Separator />
+            </Grid>
+          </Grid>
 
           <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 12 }}>
-              {/* <h1 className="title-new">Add Business Users/Managers</h1> */}
-              <Typography variant="h4" gutterBottom>
-                Add Business Users/Managers
-              </Typography>
-            </Grid>
             {[
               { label: "Full Name", name: "fullName" },
               { label: "Email Address", name: "email" },
@@ -121,22 +124,25 @@ const AddUsers = () => {
 
             {/* Job Title */}
             <Grid size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor="jobTitle">Job Title</InputLabel>
-                <Select
-                  name="jobTitle"
-                  id="jobTitle"
-                  size="small"
-                  value={formData.jobTitle}
-                  onChange={handleChange}
-                >
-                  {jobOptions.map((job) => (
-                    <MenuItem key={job} value={job}>
-                      {job}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {/* <FormControl fullWidth> */}
+              {/* <InputLabel htmlFor="jobTitle">Job Title</InputLabel> */}
+              <TextField
+                select
+                name="jobTitle"
+                id="jobTitle"
+                size="small"
+                fullWidth
+                label="Job Title"
+                value={formData.jobTitle}
+                onChange={handleChange}
+              >
+                {jobOptions.map((job) => (
+                  <MenuItem key={job} value={job}>
+                    {job}
+                  </MenuItem>
+                ))}
+              </TextField>
+              {/* </FormControl> */}
             </Grid>
 
             <Typography variant="h5" sx={{ mt: 3, width: "100%" }}>
@@ -174,23 +180,25 @@ const AddUsers = () => {
 
             {/* Role Selection */}
             <Grid size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor="role">Role</InputLabel>
-                <Select
-                  name="role"
-                  id="role"
-                  labelId="role"
-                  size="small"
-                  value={formData.role}
-                  onChange={handleChange}
-                >
-                  {roleOptions.map((role) => (
-                    <MenuItem key={role} value={role}>
-                      {role}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {/* <FormControl fullWidth>
+                <InputLabel htmlFor="role">Role</InputLabel> */}
+              <TextField
+                select
+                fullWidth
+                label="Role"
+                name="role"
+                id="role"
+                size="small"
+                value={formData.role}
+                onChange={handleChange}
+              >
+                {roleOptions.map((role) => (
+                  <MenuItem key={role} value={role}>
+                    {role}
+                  </MenuItem>
+                ))}
+              </TextField>
+              {/* </FormControl> */}
             </Grid>
 
             {/* Access Level */}
@@ -252,19 +260,22 @@ const AddUsers = () => {
             </Grid>
 
             <Grid size={{ xs: 12, md: 4 }}>
-              <FormControl fullWidth>
-                <InputLabel htmlFor="status">Status</InputLabel>
-                <Select
-                  name="status"
-                  id="status"
-                  size="small"
-                  value={formData.status}
-                  onChange={handleChange}
-                >
-                  <MenuItem value="active">Active</MenuItem>
-                  <MenuItem value="inactive">Inactive</MenuItem>
-                </Select>
-              </FormControl>
+              {/* <FormControl fullWidth>
+                <InputLabel htmlFor="status">Status</InputLabel> */}
+              <TextField
+                select
+                fullWidth
+                label="Status"
+                name="status"
+                id="status"
+                size="small"
+                value={formData.status}
+                onChange={handleChange}
+              >
+                <MenuItem value="active">Active</MenuItem>
+                <MenuItem value="inactive">Inactive</MenuItem>
+              </TextField>
+              {/* </FormControl> */}
             </Grid>
 
             <Grid size={{ xs: 12, md: 4 }}>
@@ -281,18 +292,18 @@ const AddUsers = () => {
             </Grid>
             <Grid size={12} className="submit-div">
               <Button type="submit" fullWidth className="btn-submit">
-                Save
+                {user_id ? "Update" : "Save"}
               </Button>
               <Button
                 className="btn-clear"
                 onClick={() => navigate("/search-ba")}
                 fullWidth
               >
-                Cancel
+                Back
               </Button>
             </Grid>
           </Grid>
-        </div>
+        </Box>
       </Container>
     </div>
   );

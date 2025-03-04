@@ -10,6 +10,7 @@ import {
   Grid2 as Grid,
 } from "@mui/material";
 import { Separator } from "../../components/Divider";
+import SFTPServiceAccordion from "../../components/SFTPInstructions";
 
 export const Instructions = () => {
   const [selectedClient, setSelectedClient] = useState("IBM SI");
@@ -26,9 +27,8 @@ export const Instructions = () => {
             Instructions
           </Typography>
           <Separator />
-          <br />
           <Grid container>
-            <Grid size={12}>
+            {/* <Grid size={12}>
               <FormControl fullWidth sx={{ marginBottom: 3 }}>
                 <InputLabel htmlFor="ftpClient">FTP Client</InputLabel>
                 <Select
@@ -43,9 +43,9 @@ export const Instructions = () => {
                   <MenuItem value="WinSCP">WinSCP</MenuItem>
                 </Select>
               </FormControl>
-            </Grid>
+            </Grid> */}
             <Grid size={12}>
-              {selectedClient === "WinSCP" && (
+              {/* {selectedClient === "WinSCP" && (
                 <Box>
                   <Typography variant="h4" gutterBottom className="heading">
                     How to Set Up WinSCP with McKesson SFTP Host Key
@@ -210,15 +210,26 @@ export const Instructions = () => {
                     Support at [support contact details]
                   </Typography>
                 </Box>
-              )}
+              )} */}
 
               {selectedClient === "IBM SI" && (
                 <Box>
-                  <Typography variant="h4" gutterBottom className="heading">
-                    Setting Up IBM Sterling Integrator for McKesson SFTP
-                    Connection
-                  </Typography>
-                  <Typography variant="h6" className="heading-small">
+                  <Grid
+                    spacing={2}
+                    sx={{ marginBottom: "20px" }}
+                    className="contact-support-content column"
+                  >
+                    <Grid size={12}>
+                      <Typography className="heading-contact">
+                        Step-by-Step Guide for Downloading the Host Key and
+                        Uploading the Client Key Introduction: "Welcome! This
+                        guide will walk you through the process of downloading
+                        the host key and uploading your SFTP client key. Follow
+                        these simple steps to ensure a smooth and secure setup."
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  {/* <Typography variant="h6" className="heading-small">
                     Prerequisites
                   </Typography>
                   <ul>
@@ -226,29 +237,69 @@ export const Instructions = () => {
                     <li>- McKesson SFTP portal access credentials</li>
                     <li>- Your SFTP username and password from McKesson</li>
                     <li>- Administrative access to Sterling Integrator</li>
-                  </ul>
+                  </ul> */}
 
                   <Typography variant="h6" className="heading-small">
                     Step 1: Download the Host Key
                   </Typography>
                   <ol>
                     <li>Log in to the McKesson SFTP Key Management Portal</li>
-                    <li>Navigate to the "Host Key Download" section</li>
-                    <li>Click "Download Host Key" button</li>
-                    <li>
+                    <ul>
+                      <li>
+                        - Visit our website at [https//www.sftp.edimckesson.com]
+                      </li>
+                      <li>- Enter your username and password to log in.</li>
+                    </ul>
+                    <li>Navigate to the SFTP key Management Screen: </li>
+                    <ul>
+                      <li>
+                        - Choose the SFTP login ID from the list to download the
+                        host key.
+                      </li>
+                    </ul>
+                    <li>Download the Host Key: </li>
+                    <ul>
+                      <li>- Verify the Host key from the selection.</li>
+                      <li>- Click on the "Download Host Key" button.</li>
+                      <li>
+                        - Save the file to a secure location on your computer.
+                      </li>
+                    </ul>
+                    {/* <li>
                       Save the key file to a secure location on your SI server
-                    </li>
+                    </li> */}
                   </ol>
 
                   <Typography variant="h6" className="heading-small">
-                    Step 2: Configure Host Key in Sterling Integrator
+                    Step 2: Uploading the SFTP Client Key
                   </Typography>
                   <ol>
-                    <li>Launch IBM Sterling Integrator Administrator</li>
-                    <li>Navigate to Services → Security Services</li>
-                    <li>Select "Known Hosts Configuration"</li>
-                    <li>Click "Add" to create a new known host entry</li>
-                    <li>
+                    <li>Prepare Your Client Key:</li>
+                    <ul>
+                      <li>
+                        - Ensure your client key is in a compatible format
+                        (e.g., .pem, .ppk).
+                      </li>
+                      <li>
+                        - If not, convert it using an appropriate tool like
+                        OpenSSH or PuTTYgen.
+                      </li>
+                    </ul>
+                    <li>Navigate to the SFTP key Management Screen:</li>
+                    <ul>
+                      <li>
+                        - Choose the SFTP login ID from the list to download the
+                        host key.
+                      </li>
+                    </ul>
+                    <li>Upload Your Client Key/Password:</li>
+                    <ul>
+                      <li>
+                        - Click on the "Action" button to upload client key.
+                      </li>
+                    </ul>
+                    {/* <li>Click "Add" to create a new known host entry</li> */}
+                    {/* <li>
                       Enter the following details:
                       <ul>
                         <li>- Host: sftp.edi.mckesson.com</li>
@@ -258,11 +309,11 @@ export const Instructions = () => {
                           - Import the host key file you downloaded in Step 1
                         </li>
                       </ul>
-                    </li>
+                    </li> */}
                   </ol>
 
-                  <Typography variant="h6" className="heading-small">
-                    Step 3: Create SFTP Consumer/Producer Service
+                  {/* <Typography variant="h6" className="heading-small">
+                    Replacement from Mck_TestView
                   </Typography>
                   <ol>
                     <li>Navigate to Services → Protocol Services</li>
@@ -276,9 +327,10 @@ export const Instructions = () => {
                         <li>- State on Startup: Active</li>
                       </ul>
                     </li>
-                  </ol>
+                  </ol> */}
+                  <SFTPServiceAccordion />
 
-                  <Typography variant="h6" className="heading-small">
+                  {/* <Typography variant="h6" className="heading-small">
                     Step 4: Configure Connection Details
                   </Typography>
                   <ol>
@@ -326,20 +378,26 @@ export const Instructions = () => {
                     <li>Save all configurations</li>
                     <li>Start the service</li>
                     <li>Monitor the service log for connection status</li>
-                  </ol>
+                  </ol> */}
 
                   <Typography variant="h6" className="heading-small">
-                    Troubleshooting Common Issues
+                    Troubleshooting Tips:
                   </Typography>
-                  <ul>
-                    <li>
-                      - If authentication fails, verify host key and credentials
-                    </li>
-                    <li>
-                      - If file transfer fails, check directory permissions and
-                      file naming conventions
-                    </li>
-                  </ul>
+                  <ol>
+                    <li>Issue: Unable to Download Host Key</li>
+                    <ul>
+                      <li>
+                        -Ensure you have the necessary permissions set in your
+                        account.
+                      </li>
+                      <li>Check your internet connection and try again.</li>
+                    </ul>
+                    <li>Issue: Client Key Upload Fails</li>
+                    <ul>
+                      <li>-Verify the file format and size.</li>
+                      <li>Contact support if the issue persists.</li>
+                    </ul>
+                  </ol>
                 </Box>
               )}
             </Grid>

@@ -12,15 +12,17 @@ import Container from "../../../components/Container";
 import { Separator } from "../../../components/Divider";
 import SearchIcon from "@mui/icons-material/Search";
 import { SearchButton } from "../../../shared/SearchButton";
-import { Add } from "@mui/icons-material";
+import { Add, DeleteForever } from "@mui/icons-material";
 import Table from "../../../shared/Table";
 import { useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
+import Popup from "../../../components/Popup";
 
-export default function ClientKeyManagement() {
+export default function ContactList() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(apiData);
+  const [deletePopup, setDeletePopup] = useState(false);
 
   useEffect(() => {
     if (searchQuery === "") {
@@ -28,34 +30,53 @@ export default function ClientKeyManagement() {
     }
   }, [searchQuery]);
 
+  //Table column.
   const columns = [
-    { id: "sftpId", name: "SFTP ID" },
-    { id: "tpName", name: "Trading Partner Name" },
-    { id: "authType", name: "Auth Type" },
+    { id: "firstName", name: "First Name" },
+    { id: "lastName", name: "Last Name" },
+    { id: "email", name: "Email" },
+    { id: "contactNo", name: "Direct Contact number" },
+    { id: "role", name: "Role" },
     { id: "action", name: "#", align: "right" },
   ];
 
+  //Function to search data.
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
     const result = apiData.filter((item) => {
-      return item.sftpId.toLowerCase().includes(query);
+      return (
+        item.firstName.toLowerCase().includes(query) ||
+        item.email.toLowerCase().includes(query)
+      );
     });
     setFilteredData(result);
   };
 
+  //Render Action
   const renderAction = (item) => {
     return (
-      <Tooltip title="Update" arrow>
-        <IconButton
-          className="update-icon"
-          onClick={() => navigate(`/update/client_key/${item.id}`)}
-        >
-          <EditIcon className="action-icons" />
-        </IconButton>
-      </Tooltip>
+      <Box className="action-gap">
+        <Tooltip title="Update" arrow>
+          <IconButton
+            className="update-icon"
+            onClick={() => navigate(`/update/contact/${item.id}`)}
+          >
+            <EditIcon className="action-icons" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete" arrow>
+          <IconButton
+            className="update-icon"
+            onClick={() => setDeletePopup(true)}
+          >
+            <DeleteForever className="delete-icon" />
+          </IconButton>
+        </Tooltip>
+      </Box>
     );
   };
 
+  //Row data.
   const rowData = filteredData.map((item: any) => ({
     ...item,
     effectiveDate: new Date(item.effectiveDate).toLocaleString(),
@@ -67,7 +88,7 @@ export default function ClientKeyManagement() {
       <Container>
         <Box className="content-body">
           <Typography variant="h4" gutterBottom className="heading">
-            Client Key Management
+            Contact Details
           </Typography>
           <Separator />
           <Grid container>
@@ -82,9 +103,9 @@ export default function ClientKeyManagement() {
               <Button
                 className="add-btn"
                 startIcon={<Add />}
-                onClick={() => navigate("/add/client_key")}
+                onClick={() => navigate("/add/contact")}
               >
-                Add Client Key
+                Add Contact
               </Button>
             </Grid>
           </Grid>
@@ -96,7 +117,7 @@ export default function ClientKeyManagement() {
             <Grid size={{ xs: 6, sm: 6 }}>
               <TextField
                 fullWidth
-                placeholder="Search SFTP Login ID"
+                placeholder="Search First Name, Email"
                 variant="outlined"
                 size="small"
                 value={searchQuery}
@@ -115,22 +136,42 @@ export default function ClientKeyManagement() {
             </Grid>
           </Grid>
         </Box>
+        <Popup
+          close
+          open={deletePopup}
+          body="Are you sure, You want to delete this data?"
+          handleSuccess={() => setDeletePopup(false)}
+          handleClose={() => setDeletePopup(false)}
+          confirmButton="Delete"
+          cancelButton="Close"
+        />
       </Container>
     </div>
   );
 }
-
 const apiData = [
   {
     id: "9eb84cf0-fa18-4141-80b9-5deb092056ff",
-    tpName: "Walmart",
-    sftpId: "eid001",
-    authType: "Password",
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    contactNo: "+1234567890",
+    role: "Business Admin",
   },
   {
-    id: "5ad0e2cd-fe4a-40a2-83f4-21994615a6d8",
-    tpName: "Walmart",
-    sftpId: "eid002",
-    authType: "Client Key",
+    id: "a3c91f8b-2c54-4d6b-9f45-8d1e4b7f92e1",
+    firstName: "Jane",
+    lastName: "Smith",
+    email: "jane.smith@example.com",
+    contactNo: "+1987654321",
+    role: "Manager",
+  },
+  {
+    id: "f5e7c2a1-9a54-4d77-8465-3b5d6c84b234",
+    firstName: "Mike",
+    lastName: "Johnson",
+    email: "mike.johnson@example.com",
+    contactNo: "+1122334455",
+    role: "Business Admin",
   },
 ];

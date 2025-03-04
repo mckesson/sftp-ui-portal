@@ -5,6 +5,7 @@
   background-color: #FFF;
 }
 
+
 .row{
   display: grid;
   grid-template-columns: repeat(2,1fr);
@@ -36,8 +37,12 @@
 }
 
 .MuiAccordionSummary-content h6{
-  color: #143359 !important;
+  color: #143359 ;
   font-size: 16px !important;
+}
+
+li{
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
 
 .name-text-view{
@@ -110,6 +115,24 @@
 
 .update-icon{
   padding: 0;
+}
+
+.delete-icon{
+  color:#FF0000
+}
+
+
+.action-icons{
+  color:#000
+}
+
+.action-gap{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-gap button:not(:last-child) {
+  margin-right: 10px;
 }
 
 .mail-link{

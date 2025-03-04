@@ -15,6 +15,7 @@ import Container from "../../../components/Container";
 import Popup from "../../../components/Popup";
 import { updateContactValidation } from "../../../utils";
 import { Separator } from "../../../components/Divider";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface FormValues {
   firstName: string;
@@ -26,7 +27,9 @@ interface FormValues {
   role: string;
 }
 
-export default function UpdateContact() {
+export default function AddUpdateContact() {
+  const { user_id } = useParams();
+  const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
   const [failure, setFailure] = useState(false);
 
@@ -56,30 +59,25 @@ export default function UpdateContact() {
       <Container>
         <Box className="content-body">
           <Typography variant="h4" gutterBottom className="heading">
-            Update Contact Information
+            {user_id
+              ? " Update Contact Information"
+              : "Add Contact Information"}
           </Typography>
           <Separator />
           <form onSubmit={updateForm.handleSubmit}>
             <Grid container spacing={2} className="form-grid">
-              <Grid size={{ xs: 2, sm: 2 }}>
-                <InputLabel htmlFor="sftpLoginId">SFTP Login ID*:</InputLabel>
-              </Grid>
-              <Grid size={{ xs: 10, sm: 10 }}>
-                {/* <TextField
-                  fullWidth
-                  placeholder="Enter SFTP Login ID"
-                  size="small"
-                  id="sftpLoginId"
-                  name="sftpLoginId"
-                  value={updateForm.values.sftpLoginId}
-                  slotProps={{
-                    input: {
-                      readOnly: true,
-                    },
-                  }}
-                /> */}
-                <Typography>{updateForm.values.sftpLoginId}</Typography>
-              </Grid>
+              {user_id && (
+                <>
+                  <Grid size={{ xs: 2, sm: 2 }}>
+                    <InputLabel htmlFor="sftpLoginId">
+                      SFTP Login ID*:
+                    </InputLabel>
+                  </Grid>
+                  <Grid size={{ xs: 10, sm: 10 }}>
+                    <Typography>{updateForm.values.sftpLoginId}</Typography>
+                  </Grid>
+                </>
+              )}
               <Grid size={{ xs: 2, sm: 2 }}>
                 <InputLabel htmlFor="firstName">First Name*:</InputLabel>
               </Grid>
@@ -192,16 +190,17 @@ export default function UpdateContact() {
               </Grid>
               <Grid size={12} className="submit-div">
                 <Button type="submit" fullWidth className="btn-submit">
-                  Update
+                  {user_id ? "Update" : "Save"}
                 </Button>
                 <Button
                   className="btn-clear"
                   onClick={() => {
+                    navigate("/contact-list");
                     updateForm.resetForm();
                   }}
                   fullWidth
                 >
-                  Cancel
+                  Back
                 </Button>
               </Grid>
             </Grid>

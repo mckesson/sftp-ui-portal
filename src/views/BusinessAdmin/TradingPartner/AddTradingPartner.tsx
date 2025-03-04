@@ -11,7 +11,7 @@ import { useFormik } from "formik";
 import { Add, Remove } from "@mui/icons-material";
 import Container from "../../../components/Container";
 import { Separator } from "../../../components/Divider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Popup from "../../../components/Popup";
 
 interface FormValues {
@@ -30,6 +30,7 @@ interface FormValues {
 
 export default function AddTradingPartner() {
   const navigate = useNavigate();
+  const { user_id } = useParams();
   const [success, setSuccess] = useState(false);
 
   // Function to submit form
@@ -101,7 +102,7 @@ export default function AddTradingPartner() {
       <Container>
         <Box className="content-body">
           <Typography variant="h4" gutterBottom className="heading">
-            Add Trading Partner
+            {user_id ? "Update Trading Partner" : " Add Trading Partner"}
           </Typography>
           <Separator />
 
@@ -452,7 +453,7 @@ export default function AddTradingPartner() {
                   onClick={handleAddCIMSPartner}
                   className="add-row-btn"
                 >
-                  Add
+                  {user_id ? "Update" : "Add"}
                 </Button>
               </Grid>
 

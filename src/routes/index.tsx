@@ -11,12 +11,13 @@ import HostKeyManagement from "../views/SystemAdmin/HostKeyManagement/HostKeyMan
 import { useSelector } from "react-redux";
 import ClientKeyManagement from "../views/TradingPartner/ClientKeyManagement";
 import ViewTradingPartner from "../views/SystemAdmin/TradingPartner";
-import UpdateContact from "../views/TradingPartner/UpdateContact";
+import AddUpdateContact from "../views/TradingPartner/ContactDetails/AddUpdateContact";
 import Support from "../views/TradingPartner/Support";
 import ListHostKey from "../views/SystemAdmin/HostKeyManagement";
 import KeyManagement from "../views/BusinessAdmin/KeyManagement";
 import AddUpdateClientKey from "../views/TradingPartner/ClientKeyManagement/AddUpdateClientKey";
 import ViewTradingPartnerDetails from "../views/SystemAdmin/TradingPartner/ViewTradingPartner";
+import ContactList from "../views/TradingPartner/ContactDetails/ContactList";
 
 export default function AppRoutes() {
   const { role } = useSelector((state) => state?.user);
@@ -50,12 +51,19 @@ export default function AppRoutes() {
           element={<ViewTradingPartnerDetails />}
         />
         <Route path="/add/trading_partner" element={<AddTradingPartner />} />
+        <Route
+          path="/update/trading_partner/:user_id"
+          element={<AddTradingPartner />}
+        />
         <Route path="/instructions" element={<Instructions />} />
         <Route path="/search-ba" element={<UsersList />} />
         <Route path="/search-ba/add" element={<AddUsers />} />
+        <Route path="/search-ba/update/:user_id" element={<AddUsers />} />
         <Route path="/download" element={<FileDownloadPage />} />
         <Route path="/support" element={<Support />} />
-        <Route path="/update-contact" element={<UpdateContact />} />
+        <Route path="/contact-list" element={<ContactList />} />
+        <Route path="/add/contact" element={<AddUpdateContact />} />
+        <Route path="/update/contact/:user_id" element={<AddUpdateContact />} />
         <Route
           path="/client-key-management"
           element={<ClientKeyManagement />}

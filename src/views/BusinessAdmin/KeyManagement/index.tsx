@@ -5,17 +5,15 @@ import {
   Grid2 as Grid,
   Tooltip,
   Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   InputLabel,
   TextField,
   InputAdornment,
   Button,
+  IconButton,
 } from "@mui/material";
 import { Separator } from "../../../components/Divider";
 import { addOneYear } from "../../../utils/addOneYear";
-import { Download, ExpandMore } from "@mui/icons-material";
+import { Download } from "@mui/icons-material";
 import Table from "../../../shared/Table";
 import Modal from "../../../components/Modal";
 import { useFormik } from "formik";
@@ -29,11 +27,9 @@ const KeyManagement = () => {
   const [actionType, setActionType] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
   const [passwordGen, setPasswordGen] = useState(false);
-  const [expandedIndex, setExpandedIndex] = useState<number | false>(0);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [selectedSftpId, setSelectedSftpId] = useState<string | null>(null);
   console.log("selectedSftpId", selectedSftpId);
-
   useEffect(() => {
     if (searchQuery === "") {
       setFilteredData(tpData);
@@ -83,11 +79,24 @@ const KeyManagement = () => {
     { id: "cimsPartnerId", name: "CIMS Partner IDs" },
   ];
 
+  //Function to download sample .pem file.
+  const handleDownload = () => {
+    const fileUrl = "/sample.pem";
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.setAttribute("download", "sample.pem");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   //Download button for host key download.
   const renderDownload = (item: any) => {
     return (
       <Tooltip arrow title="Download Host Key">
-        <Download sx={{ color: "#000" }} />
+        <IconButton className="update-icon" onClick={handleDownload}>
+          <Download className="action-icons" />
+        </IconButton>
       </Tooltip>
     );
   };
@@ -116,7 +125,7 @@ const KeyManagement = () => {
       ],
     },
     {
-      sftpLoginId: "efts03",
+      sftpLoginId: "efts01",
       details: [
         {
           keyType: "DSA",
@@ -134,17 +143,19 @@ const KeyManagement = () => {
   };
 
   //Table row for client.
-  const rowData = apiData.map((item: any) => ({
-    ...item,
-    action: (
-      <Typography
-        className="update-key-pass"
-        onClick={() => handleActionChange(item)}
-      >
-        {item?.action}
-      </Typography>
-    ),
-  }));
+  const rowData = apiData
+    .filter((item: any) => item.sftpId === selectedSftpId)
+    .map((item: any) => ({
+      ...item,
+      action: (
+        <Typography
+          className="update-key-pass"
+          onClick={() => handleActionChange(item)}
+        >
+          {item?.action}
+        </Typography>
+      ),
+    }));
 
   const renderKeyPass = () => {
     return (
@@ -254,14 +265,17 @@ const KeyManagement = () => {
     setPasswordGen(false);
   };
 
-  // Toggle expansion on click
-  const handleAccordionChange = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? false : index);
-  };
-
+  //Function of row click.
   const handleRowClick = (sftpId: string) => {
     setSelectedSftpId(sftpId);
   };
+
+  //Trading partner table column
+  const tPartnerCol = [
+    { id: "sftpId", name: "SFTP ID" },
+    { id: "host", name: "Trading Partner Name" },
+    { id: "cimsPartnerId", name: "CIMS ID", width: 150 },
+  ];
 
   return (
     <div className="home-page">
@@ -304,11 +318,7 @@ const KeyManagement = () => {
             <Grid size={{ xs: 12, sm: 12 }}>
               <Table
                 pagination
-                columns={[
-                  { id: "sftpId", name: "SFTP ID" },
-                  { id: "cimsPartnerId", name: "CIMS ID" },
-                  { id: "host", name: "Trading Partner Name" },
-                ]}
+                columns={tPartnerCol}
                 data={filteredData}
                 onRowClick={(row) => handleRowClick(row.sftpId)}
               />
@@ -357,7 +367,12 @@ const KeyManagement = () => {
             </Grid>
             {selectedSftpId ? (
               <Grid size={{ xs: 12, sm: 12 }}>
-                <Table pagination columns={clientColumns} data={rowData} />
+                <Table
+                  pagination
+                  columns={clientColumns}
+                  data={rowData}
+                  noDataText="Client Key Data Not Found"
+                />
               </Grid>
             ) : (
               <Grid
@@ -399,24 +414,19 @@ const KeyManagement = () => {
 const tpData = [
   {
     sftpId: "efts02",
-    host: "Walmart",
-    cimsPartnerId: "ehd002",
-  },
-  {
-    sftpId: "efts02",
     host: "CVS",
-    cimsPartnerId: "ehd002",
+    cimsPartnerId: "mc1234_ib_po_st, mc1234_io_pr_st, mc1234_ib_in_st",
   },
   {
     sftpId: "efts01",
     host: "Walmart",
-    cimsPartnerId: "ehd012",
+    cimsPartnerId: "mc1234_ib_po_st, mc1234_io_pr_st, mc1234_ib_in_st",
   },
 ];
 
 const apiData = [
   {
-    sftpId: "efts02",
+    sftpId: "efts01",
     host: "sftp.edi.mckesson.com",
     auth: "Client Key",
     action: "Change Key",

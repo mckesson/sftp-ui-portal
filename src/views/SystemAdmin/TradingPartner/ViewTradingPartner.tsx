@@ -11,6 +11,7 @@ import Container from "../../../components/Container";
 import { Separator } from "../../../components/Divider";
 import { useNavigate } from "react-router-dom";
 import Popup from "../../../components/Popup";
+import { useSelector } from "react-redux";
 
 interface FormValues {
   tradingPartnerName: string;
@@ -27,13 +28,14 @@ interface FormValues {
 }
 
 export default function ViewTradingPartnerDetails() {
+  const { role } = useSelector((state) => state?.user);
   const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
 
   // Simulating the form values
   const partnerData: FormValues = {
-    tradingPartnerName: "Sample Trading Partner",
-    businessUnit: "Sample Business Unit",
+    tradingPartnerName: "Walmart",
+    businessUnit: "Hospital Finance Department",
     contactPersons: [
       {
         firstName: "John",
@@ -168,7 +170,7 @@ export default function ViewTradingPartnerDetails() {
                 <Grid container key={index} spacing={2}>
                   <Grid size={5} className="mb-10">
                     <Typography variant="body1">
-                      Login ID: {item.loginId}
+                      sFTP Login ID: {item.loginId}
                     </Typography>
                   </Grid>
                   <Grid size={5}>
@@ -184,7 +186,9 @@ export default function ViewTradingPartnerDetails() {
               <Button
                 className="btn-clear"
                 onClick={() => {
-                  navigate("/view-trading-partner");
+                  role === "System Administrator"
+                    ? navigate("/view-trading-partner")
+                    : navigate("/trading-partner");
                 }}
                 fullWidth
               >
